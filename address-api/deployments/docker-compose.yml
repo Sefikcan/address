@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  postgresql:
+    image: postgres:12-alpine
+    container_name: api_postgresql
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=pg
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=address_db
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
+    container_name: elasticsearch
+    environment:
+      - xpack.monitoring.enabled=true
+      - xpack.watcher.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.1
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+
+volumes:
+  db:
+  elasticsearch-data:

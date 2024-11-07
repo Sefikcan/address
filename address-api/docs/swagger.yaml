@@ -1,0 +1,215 @@
+basePath: /
+definitions:
+  request.AddressCreateRequest:
+    properties:
+      city:
+        maxLength: 20
+        minLength: 3
+        type: string
+      country:
+        maxLength: 20
+        minLength: 3
+        type: string
+      fullAddress:
+        maxLength: 100
+        minLength: 10
+        type: string
+      userId:
+        type: string
+    required:
+    - city
+    - country
+    - fullAddress
+    - userId
+    type: object
+  request.AddressPatchRequest:
+    properties:
+      doc:
+        items:
+          $ref: '#/definitions/request.PatchRequest'
+        type: array
+    type: object
+  request.AddressUpdateRequest:
+    properties:
+      city:
+        maxLength: 20
+        minLength: 3
+        type: string
+      country:
+        maxLength: 20
+        minLength: 3
+        type: string
+      fullAddress:
+        maxLength: 100
+        minLength: 10
+        type: string
+      id:
+        type: integer
+      userId:
+        type: string
+    type: object
+  request.PatchRequest:
+    properties:
+      op:
+        type: string
+      path:
+        type: string
+      value: {}
+    type: object
+  response.AddressResponse:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      fullAddress:
+        type: string
+      id:
+        type: integer
+      userId:
+        type: string
+    type: object
+host: localhost:3048
+info:
+  contact: {}
+  description: This is an Address API for Swagger documentation.
+  title: Address API
+  version: "1.0"
+paths:
+  /api/v1/addresses:
+    get:
+      description: Get all addresses with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.AddressResponse'
+            type: array
+      summary: Get all addresses
+      tags:
+      - addresses
+    post:
+      description: Create a new address entry
+      parameters:
+      - description: Address creation payload
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/request.AddressCreateRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.AddressResponse'
+      summary: Create a new address
+      tags:
+      - addresses
+  /api/v1/addresses/{id}:
+    delete:
+      description: Delete an address by its ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      summary: Delete an address
+      tags:
+      - addresses
+    get:
+      description: Retrieve an address by its ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.AddressResponse'
+      summary: Get an address by ID
+      tags:
+      - addresses
+    patch:
+      description: Patch (partial update) an address by its ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Address patch payload
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/request.AddressPatchRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.AddressResponse'
+      summary: Patch an address
+      tags:
+      - addresses
+    put:
+      description: Update an address by its ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Address update payload
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/request.AddressUpdateRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.AddressResponse'
+      summary: Update an address
+      tags:
+      - addresses
+  /api/v2/addresses:
+    get:
+      description: Get all addresses with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.AddressResponse'
+            type: array
+      summary: Get all addresses
+      tags:
+      - addresses
+swagger: "2.0"

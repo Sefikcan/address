@@ -1,0 +1,30 @@
+server:
+  appversion: "1.0.0"
+  host: "localhost"
+  port: "3048"
+  mode: "Dev"
+  readtimeout: 5
+  writetimeout: 5
+  maxheaderbytes: 10
+  ctxtimeout: 4
+
+logger:
+  development: true
+  encoding: json
+  level: info
+
+auth:
+  jwtsecret: "your_secret_key"
+
+postgres:
+  host: localhost
+  port: 5432
+  username: pg
+  password: admin
+  dbname: address_db
+  sslmode: false
+  driver: pgx
+  maxopenconns: 60
+  connmaxlifetime: 120
+  maxIdleconns: 30
+  connmaxidletime: 20
