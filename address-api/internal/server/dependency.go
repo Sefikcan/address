@@ -9,10 +9,16 @@ import (
 	"github.com/sefikcan/address/address-api/internal/address/repository"
 	"github.com/sefikcan/address/address-api/internal/address/service"
 	mw "github.com/sefikcan/address/address-api/internal/middleware"
+	"github.com/sefikcan/address/address-api/pkg/metric"
 	"github.com/sefikcan/address/address-api/pkg/swagger"
 )
 
 func (s *Server) MapHandlers(app *fiber.App) error {
+	metrics, err := metric.CreateMetrics(s.cfg.Metric.Url, s.cfg.Metric.ServiceName)
+	if err != nil {
+		s.logger.Errorf("CreateMetrics error: %s", err)
+	}
+
 	// initialize repositories and service
 	addressRepository := repository.NewAddressRepository(s.db)
 	addressService := service.NewAddressService(s.cfg, addressRepository, s.logger)
@@ -35,6 +41,7 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 		EnableStackTrace: false,
 	}))
 	app.Use(requestid.New())
+	app.Use(middlewareManager.Metrics(metrics))
 
 	swaggerMiddleware := swagger.NewSwagger("./address-api/docs/swagger.json", "/", s.logger)
 	swaggerMiddleware.RegisterSwagger(app)

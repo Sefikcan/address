@@ -22,18 +22,19 @@ type Config struct {
 	Postgres PostgresConfig       `mapstructure:"postgres"`
 	Logger   LoggerConfig         `mapstructure:"logger"`
 	Auth     AuthenticationConfig `mapstructure:"auth"`
+	Metric   MetricConfig         `mapstructure:"metric"`
 }
 
 type ServerConfig struct {
-	AppVersion     string        `mapstructure:"appversion"`
+	AppVersion     string        `mapstructure:"appVersion"`
 	Host           string        `mapstructure:"host"`
 	Port           string        `mapstructure:"port"`
 	Mode           string        `mapstructure:"mode"`
-	ReadTimeout    time.Duration `mapstructure:"readtimeout"`
-	WriteTimeout   time.Duration `mapstructure:"writetimeout"`
+	ReadTimeout    time.Duration `mapstructure:"readTimeout"`
+	WriteTimeout   time.Duration `mapstructure:"writeTimeout"`
 	SSL            bool          `mapstructure:"ssl"`
-	MaxHeaderBytes int           `mapstructure:"maxheaderbytes"`
-	CtxTimeout     time.Duration `mapstructure:"ctxtimeout"`
+	MaxHeaderBytes int           `mapstructure:"maxHeaderBytes"`
+	CtxTimeout     time.Duration `mapstructure:"ctxTimeout"`
 }
 
 type LoggerConfig struct {
@@ -43,26 +44,31 @@ type LoggerConfig struct {
 }
 
 type PostgresConfig struct {
-	Host            string `mapstructure:"host"`
-	Port            string `mapstructure:"port"`
-	UserName        string `mapstructure:"username"`
-	Password        string `mapstructure:"password"`
-	DbName          string `mapstructure:"dbname"`
-	SSLMode         bool   `mapstructure:"ssl-mode"`
-	Driver          string `mapstructure:"driver"`
-	MaxOpenConns    int    `mapstructure:"maxopenconns"`
-	ConnMaxLifeTime int    `mapstructure:"connmaxlifetime"`
-	MaxIdleConns    int    `mapstructure:"maxidleconns"`
-	ConnMaxIdleTime int    `mapstructure:"connmaxidletime"`
+	Host               string `mapstructure:"host"`
+	Port               string `mapstructure:"port"`
+	UserName           string `mapstructure:"username"`
+	Password           string `mapstructure:"password"`
+	DbName             string `mapstructure:"dbname"`
+	SSLMode            bool   `mapstructure:"ssl-mode"`
+	Driver             string `mapstructure:"driver"`
+	MaxOpenConnections int    `mapstructure:"maxOpenConnections"`
+	ConnMaxLifeTime    int    `mapstructure:"connMaxLifetime"`
+	MaxIdleConnections int    `mapstructure:"maxIdleConnections"`
+	ConnMaxIdleTime    int    `mapstructure:"connMaxIdleTime"`
 }
 
 type AuthenticationConfig struct {
-	JwtSecret string `mapstructure:"jwtsecret"`
+	JwtSecret string `mapstructure:"jwtSecret"`
+}
+
+type MetricConfig struct {
+	Url         string `mapstructure:"url"`
+	ServiceName string `mapstructure:"serviceName"`
 }
 
 func NewConfig() *Config {
 	env, _ := os.LookupEnv(environmentKey)
-	fmt.Println("Environment: [" + env + "] readed from runtime arguments [" + environmentKey + "].")
+	fmt.Println("Environment: [" + env + "] was successfully read from runtime arguments [" + environmentKey + "].")
 
 	return ReadConfig(&Config{}, strings.ToUpper(env))
 }

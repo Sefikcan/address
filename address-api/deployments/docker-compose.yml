@@ -1,6 +1,17 @@
 version: "3.8"
 
 services:
+  address-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - environment=DEV
+    ports:
+      - "3048:3048"
+    depends_on:
+      - postgresql
+
   postgresql:
     image: postgres:12-alpine
     container_name: api_postgresql
@@ -37,6 +48,30 @@ services:
     ports:
       - "5601:5601"
 
+  prometheus:
+    container_name: prometheus_container
+    image: prom/prometheus
+    restart: unless-stopped
+    ports:
+      - "9000:9090"
+    volumes:
+      - ./prometheus:/etc/monitoring
+      - prometheus-data:/monitoring
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml  # If you use --web.enable-lifecycle you can reload configuration files (e.g. rules) without restarting Prometheus:
+
+  grafana:
+    container_name: grafana_container
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources # data source configuration
+      - grafana-data:/var/lib/grafana # used to save dashboards
+
 volumes:
   db:
   elasticsearch-data:
+  prometheus-data:
+  grafana-data:
+  alertmanager-data:

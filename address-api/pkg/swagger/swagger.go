@@ -72,20 +72,20 @@ func (s *Swagger) RegisterSwagger(app *fiber.App) {
 		panic(err)
 	}
 
-	swaggerV2UI := middleware.SwaggerUIOpts{
-		BasePath: s.BasePath,
-		Path:     "v2/docs",
-		SpecURL:  path.Join(s.BasePath, "v2/swagger.json"),
-	}
+	//swaggerV2UI := middleware.SwaggerUIOpts{
+	//	BasePath: s.BasePath,
+	//	Path:     "v2/docs",
+	//	SpecURL:  path.Join(s.BasePath, "v2/swagger.json"),
+	//}
 
-	swaggerUIV2Handler := s.UseSwaggerUI(swaggerV2UI)
-	if err != nil {
-		s.logger.Fatalf("Failed to initialize swagger v2 handlers: %v", err)
-		panic(err)
-	}
+	//swaggerUIV2Handler := s.UseSwaggerUI(swaggerV2UI)
+	//if err != nil {
+	//	s.logger.Fatalf("Failed to initialize swagger v2 handlers: %v", err)
+	//	panic(err)
+	//}
 
 	app.Use(path.Join(s.BasePath, "v1/docs"), swaggerUIHandler)
 	app.Use(path.Join(s.BasePath, "v1/swagger.json"), swaggerFileHandler)
-	app.Use(path.Join(s.BasePath, "v2/docs"), swaggerUIV2Handler)
-	app.Use(path.Join(s.BasePath, "v2/swagger.json"), swaggerFileHandler)
+	//app.Use(path.Join(s.BasePath, "v2/docs"), swaggerUIV2Handler)
+	//app.Use(path.Join(s.BasePath, "v2/swagger.json"), swaggerFileHandler)
 }

@@ -1,20 +1,24 @@
 server:
-  appversion: "1.0.0"
+  appVersion: "1.0.0"
   host: "localhost"
   port: "3048"
   mode: "Dev"
-  readtimeout: 5
-  writetimeout: 5
-  maxheaderbytes: 10
-  ctxtimeout: 4
+  readTimeout: 5
+  writeTimeout: 5
+  maxHeaderBytes: 10
+  ctxTimeout: 4
 
 logger:
   development: true
   encoding: json
   level: info
 
+metric:
+  url: localhost:3000
+  serviceName: address_api
+
 auth:
-  jwtsecret: "your_secret_key"
+  jwtSecret: "your_secret_key"
 
 postgres:
   host: localhost
@@ -22,9 +26,9 @@ postgres:
   username: pg
   password: admin
   dbname: address_db
-  sslmode: false
+  sslMode: false
   driver: pgx
-  maxopenconns: 60
-  connmaxlifetime: 120
-  maxIdleconns: 30
-  connmaxidletime: 20
+  maxOpenConnections: 60
+  connMaxLifeTime: 120
+  maxIdleConnections: 30
+  connMaxIdleTime: 20

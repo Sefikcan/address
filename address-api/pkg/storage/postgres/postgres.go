@@ -33,9 +33,9 @@ func NewPsqlDb(c *config.Config) (*gorm.DB, error) {
 	}
 
 	// database connection pool settings
-	sqlDB.SetMaxOpenConns(c.Postgres.MaxOpenConns)
+	sqlDB.SetMaxOpenConns(c.Postgres.MaxOpenConnections)
 	sqlDB.SetConnMaxLifetime(time.Duration(c.Postgres.ConnMaxLifeTime) * time.Second)
-	sqlDB.SetMaxIdleConns(c.Postgres.MaxIdleConns)
+	sqlDB.SetMaxIdleConns(c.Postgres.MaxIdleConnections)
 	sqlDB.SetConnMaxIdleTime(time.Duration(c.Postgres.ConnMaxIdleTime) * time.Second)
 	// check database connection
 	if err = sqlDB.Ping(); err != nil {
