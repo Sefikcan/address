@@ -1,8 +1,8 @@
 package mapping
 
 import (
-	"github.com/sefikcan/address/address-api/internal/address/dto/response"
-	"github.com/sefikcan/address/address-api/internal/address/entity"
+	"github.com/sefikcan/address-api/internal/address/dto/response"
+	"github.com/sefikcan/address-api/internal/address/entity"
 )
 
 func MapDto(a entity.Address) *response.AddressResponse {

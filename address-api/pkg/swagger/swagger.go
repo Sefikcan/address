@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/pkg/errors"
-	"github.com/sefikcan/address/address-api/pkg/logger"
+	"github.com/sefikcan/address-api/pkg/logger"
 	"os"
 	"path"
 )

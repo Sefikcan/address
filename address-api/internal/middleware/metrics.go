@@ -3,7 +3,7 @@ package middleware
 import (
 	"errors"
 	"github.com/gofiber/fiber/v2"
-	"github.com/sefikcan/address/address-api/pkg/metric"
+	"github.com/sefikcan/address-api/pkg/metric"
 	"time"
 )
 

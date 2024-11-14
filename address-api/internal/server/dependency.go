@@ -5,12 +5,11 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/sefikcan/address/address-api/internal/address/handlers"
-	"github.com/sefikcan/address/address-api/internal/address/repository"
-	"github.com/sefikcan/address/address-api/internal/address/service"
-	mw "github.com/sefikcan/address/address-api/internal/middleware"
-	"github.com/sefikcan/address/address-api/pkg/metric"
-	"github.com/sefikcan/address/address-api/pkg/swagger"
+	"github.com/sefikcan/address-api/internal/address/handlers"
+	"github.com/sefikcan/address-api/internal/address/repository"
+	"github.com/sefikcan/address-api/internal/address/service"
+	mw "github.com/sefikcan/address-api/internal/middleware"
+	"github.com/sefikcan/address-api/pkg/metric"
 )
 
 func (s *Server) MapHandlers(app *fiber.App) error {
@@ -43,8 +42,8 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 	app.Use(requestid.New())
 	app.Use(middlewareManager.Metrics(metrics))
 
-	swaggerMiddleware := swagger.NewSwagger("./address-api/docs/swagger.json", "/", s.logger)
-	swaggerMiddleware.RegisterSwagger(app)
+	//swaggerMiddleware := swagger.NewSwagger("./address-api/docs/swagger.json", "/", s.logger)
+	//swaggerMiddleware.RegisterSwagger(app)
 
 	app.Use(func(c *fiber.Ctx) error {
 		c.Set("X-Content-Type-Options", "nosniff")

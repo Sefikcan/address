@@ -4,14 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	jsonpatch "github.com/evanphx/json-patch"
-	"github.com/sefikcan/address/address-api/internal/address/dto/request"
-	"github.com/sefikcan/address/address-api/internal/address/dto/response"
-	"github.com/sefikcan/address/address-api/internal/address/entity"
-	"github.com/sefikcan/address/address-api/internal/address/mapping"
-	"github.com/sefikcan/address/address-api/internal/address/repository"
-	"github.com/sefikcan/address/address-api/internal/common"
-	"github.com/sefikcan/address/address-api/pkg/config"
-	"github.com/sefikcan/address/address-api/pkg/logger"
+	"github.com/sefikcan/address-api/internal/address/dto/request"
+	"github.com/sefikcan/address-api/internal/address/dto/response"
+	"github.com/sefikcan/address-api/internal/address/entity"
+	"github.com/sefikcan/address-api/internal/address/mapping"
+	"github.com/sefikcan/address-api/internal/address/repository"
+	"github.com/sefikcan/address-api/internal/common"
+	"github.com/sefikcan/address-api/pkg/config"
+	"github.com/sefikcan/address-api/pkg/logger"
 )
 
 type AddressService interface {

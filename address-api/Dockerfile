@@ -5,13 +5,13 @@ FROM golang:1.21-alpine AS builder
 WORKDIR /app
 
 # Copy go.mod and go.sum files
-COPY ../go.mod ../go.sum ./
+COPY go.mod go.sum ./
 
 # Download dependencies
 RUN go mod download
 
 # Copy the rest of the application code
-COPY . .
+COPY . /app
 
 # Build the application binary
 RUN go build -o main ./cmd/server/main.go
@@ -24,6 +24,9 @@ WORKDIR /root/
 
 # Copy the binary from the builder stage
 COPY --from=builder /app/main .
+
+# Copy the config directory
+COPY --from=builder /app/pkg/config /root/pkg/config
 
 # Expose the port on which the app will run
 EXPOSE 3048

@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/sefikcan/address/address-api/pkg/util"
+	"github.com/sefikcan/address-api/pkg/util"
 	"time"
 )
 

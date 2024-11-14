@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"github.com/pkg/errors"
-	"github.com/sefikcan/address/address-api/internal/address/entity"
-	"github.com/sefikcan/address/address-api/internal/common"
+	"github.com/sefikcan/address-api/internal/address/entity"
+	"github.com/sefikcan/address-api/internal/common"
 	"gorm.io/gorm"
 )
 

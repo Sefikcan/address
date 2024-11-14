@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/sefikcan/address/address-api/internal/address/dto/request"
-	"github.com/sefikcan/address/address-api/internal/address/service"
+	"github.com/sefikcan/address-api/internal/address/dto/request"
+	"github.com/sefikcan/address-api/internal/address/service"
 	"strconv"
 )
 

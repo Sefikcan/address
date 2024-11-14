@@ -3,7 +3,7 @@ package util
 import (
 	"context"
 	"github.com/gofiber/fiber/v2"
-	"github.com/sefikcan/address/address-api/pkg/logger"
+	"github.com/sefikcan/address-api/pkg/logger"
 )
 
 func GetRequestId(c *fiber.Ctx) string {

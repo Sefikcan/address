@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/sefikcan/address/address-api/internal/address/dto/request"
-	"github.com/sefikcan/address/address-api/internal/middleware"
-	"github.com/sefikcan/address/address-api/pkg/logger"
-	"github.com/sefikcan/address/address-api/pkg/util"
+	"github.com/sefikcan/address-api/internal/address/dto/request"
+	"github.com/sefikcan/address-api/internal/middleware"
+	"github.com/sefikcan/address-api/pkg/logger"
+	"github.com/sefikcan/address-api/pkg/util"
 )
 
 func MapAddressRotes(app *fiber.App, addressHandler AddressHandler, logger logger.Logger, manager *middleware.Manager) {

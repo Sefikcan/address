@@ -1,8 +1,8 @@
 server:
   appVersion: "1.0.0"
-  host: "localhost"
+  host: "0.0.0.0"
   port: "3048"
-  mode: "Dev"
+  mode: "PROD"
   readTimeout: 5
   writeTimeout: 5
   maxHeaderBytes: 10
@@ -21,7 +21,7 @@ auth:
   jwtSecret: "your_secret_key"
 
 postgres:
-  host: localhost
+  host: api_postgresql
   port: 5432
   username: pg
   password: admin

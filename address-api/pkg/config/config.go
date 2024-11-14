@@ -10,10 +10,11 @@ import (
 )
 
 const (
-	defaultConfigPath     = "address-api/pkg/config/"
+	defaultConfigPath     = "pkg/config/"
 	tagName               = "mapstructure"
 	configFileType        = "yaml"
 	defaultConfigFileName = "config-dev"
+	prodConfigFileName    = "config-prod"
 	environmentKey        = "environment"
 )
 
@@ -106,14 +107,22 @@ var readFromEnv = func(v *viper.Viper) *viper.Viper {
 	return v
 }
 
-var readFromConfigServer = func(v *viper.Viper) *viper.Viper {
-	//TODO: Implement config server
-	return v
-}
-
 var readFromAppYml = func(v *viper.Viper) *viper.Viper {
 	fmt.Println("Reading application yml configuration")
 	v.SetConfigName(defaultConfigFileName)
+	v.SetTypeByDefaultValue(true)
+	v.SetConfigType(configFileType)
+	v.AddConfigPath("./" + defaultConfigPath)
+	if err := v.ReadInConfig(); err != nil {
+		fmt.Printf("Viper read config has an error; %e\n", err)
+	}
+
+	return v
+}
+
+var readFromAppProdYml = func(v *viper.Viper) *viper.Viper {
+	fmt.Println("Reading application yml configuration")
+	v.SetConfigName(prodConfigFileName)
 	v.SetTypeByDefaultValue(true)
 	v.SetConfigType(configFileType)
 	v.AddConfigPath("./" + defaultConfigPath)
@@ -130,8 +139,8 @@ var ReadConfig = func(c *Config, env string) *Config {
 	switch {
 	case env == "DEV":
 		v = readFromAppYml(v)
-	case env == "REMOTE":
-		v = readFromConfigServer(v)
+	case env == "PROD":
+		v = readFromAppProdYml(v)
 	default:
 		v = readFromEnv(v)
 	}

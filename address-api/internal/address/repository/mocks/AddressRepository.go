@@ -5,9 +5,9 @@ package mocks
 import (
 	context "context"
 
-	common "github.com/sefikcan/address/address-api/internal/common"
+	common "github.com/sefikcan/address-api/internal/common"
 
-	entity "github.com/sefikcan/address/address-api/internal/address/entity"
+	entity "github.com/sefikcan/address-api/internal/address/entity"
 
 	mock "github.com/stretchr/testify/mock"
 )

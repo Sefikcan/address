@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/sefikcan/address/address-api/pkg/config"
+	"github.com/sefikcan/address-api/pkg/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"

@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
-	"github.com/sefikcan/address/address-api/internal/address/dto/request"
-	"github.com/sefikcan/address/address-api/internal/address/entity"
-	"github.com/sefikcan/address/address-api/internal/address/repository/mocks"
-	mocks2 "github.com/sefikcan/address/address-api/internal/address/service/mocks"
-	"github.com/sefikcan/address/address-api/internal/common"
-	"github.com/sefikcan/address/address-api/pkg/config"
+	"github.com/sefikcan/address-api/internal/address/dto/request"
+	"github.com/sefikcan/address-api/internal/address/entity"
+	"github.com/sefikcan/address-api/internal/address/repository/mocks"
+	mocks2 "github.com/sefikcan/address-api/internal/address/service/mocks"
+	"github.com/sefikcan/address-api/internal/common"
+	"github.com/sefikcan/address-api/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"testing"

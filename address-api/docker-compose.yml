@@ -2,15 +2,20 @@ version: "3.8"
 
 services:
   address-api:
+    container_name: address-api
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      - environment=DEV
+      - environment=PROD
     ports:
       - "3048:3048"
     depends_on:
       - postgresql
+    volumes:
+      - ./pkg/config:/root/pkg/config
+    networks:
+      - app-network
 
   postgresql:
     image: postgres:12-alpine
@@ -24,6 +29,8 @@ services:
       - POSTGRES_DB=address_db
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - app-network
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
@@ -55,8 +62,8 @@ services:
     ports:
       - "9000:9090"
     volumes:
-      - ./prometheus:/etc/monitoring
-      - prometheus-data:/monitoring
+      - ./prometheus:/etc/deployments/monitoring
+      - prometheus-data:/deployments/monitoring
     command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml  # If you use --web.enable-lifecycle you can reload configuration files (e.g. rules) without restarting Prometheus:
 
   grafana:
@@ -67,7 +74,10 @@ services:
     restart: unless-stopped
     volumes:
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources # data source configuration
-      - grafana-data:/var/lib/grafana # used to save dashboards
+      - grafana-data:/var/lib/deployments/grafana # used to save dashboards
+
+networks:
+  app-network:
 
 volumes:
   db:

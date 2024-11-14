@@ -2,10 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"github.com/sefikcan/address/address-api/internal/server"
-	"github.com/sefikcan/address/address-api/pkg/config"
-	"github.com/sefikcan/address/address-api/pkg/logger"
-	"github.com/sefikcan/address/address-api/pkg/storage/postgres"
+	"github.com/sefikcan/address-api/internal/server"
+	"github.com/sefikcan/address-api/pkg/config"
+	"github.com/sefikcan/address-api/pkg/logger"
+	"github.com/sefikcan/address-api/pkg/storage/postgres"
 	"log"
 )
 

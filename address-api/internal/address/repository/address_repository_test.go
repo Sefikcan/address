@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"github.com/sefikcan/address/address-api/internal/address/entity"
+	"github.com/sefikcan/address-api/internal/address/entity"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

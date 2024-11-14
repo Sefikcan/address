@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/sefikcan/address/address-api/pkg/config"
-	"github.com/sefikcan/address/address-api/pkg/logger"
+	"github.com/sefikcan/address-api/pkg/config"
+	"github.com/sefikcan/address-api/pkg/logger"
 )
 
 type Manager struct {
