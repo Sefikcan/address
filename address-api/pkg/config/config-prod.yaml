@@ -13,7 +13,7 @@ logger:
   encoding: json
   level: info
   indexName: "address_log"
-  elasticSearchUrl: http://0.0.0.0:9200
+  elasticSearchUrl: http://elasticsearch:9200
 
 metric:
   url: localhost:3000

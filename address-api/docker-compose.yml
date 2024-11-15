@@ -12,11 +12,15 @@ services:
       - "3048:3048"
     depends_on:
       - postgresql
-      - elasticsearch
     volumes:
       - ./pkg/config:/root/pkg/config
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:3048/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgresql:
     image: postgres:12-alpine
@@ -32,6 +36,11 @@ services:
       - db:/var/lib/postgresql/data
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U pg -d address_db || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
@@ -41,6 +50,7 @@ services:
       - xpack.watcher.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - discovery.type=single-node
+      - xpack.security.enabled=false
     ports:
       - "9200:9200"
     volumes:
@@ -64,6 +74,11 @@ services:
       - "5601:5601"
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:5601 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   app-network:
