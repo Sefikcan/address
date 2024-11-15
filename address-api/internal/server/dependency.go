@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Server) MapHandlers(app *fiber.App) error {
-	_, err := metric.CreateMetrics(s.cfg.Metric.Url, s.cfg.Metric.ServiceName)
+	metrics, err := metric.CreateMetrics(s.cfg.Metric.Url, s.cfg.Metric.ServiceName)
 	if err != nil {
 		s.logger.Errorf("CreateMetrics error: %s", err)
 	}
@@ -35,7 +35,7 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 	app.Use(requestid.New())
 	app.Use(middlewareManager.RequestLogger)
 	app.Use(middlewareManager.ErrorLogger)
-	//app.Use(middlewareManager.Metrics(metrics))
+	app.Use(middlewareManager.Metrics(metrics))
 
 	//swaggerMiddleware := swagger.NewSwagger("./address-api/docs/swagger.json", "/", s.logger)
 	//swaggerMiddleware.RegisterSwagger(app)

@@ -33,15 +33,29 @@ func CreateMetrics(address, name string) (Metrics, error) {
 	var metric metrics
 	metric.HitsTotal = prometheus.NewCounter(prometheus.CounterOpts{
 		Name: name + "_hits_total",
+		Help: "Total number of hits for the application.",
 	})
 	if err := prometheus.Register(metric.HitsTotal); err != nil {
+		log.Printf("Error registering HitsTotal: %v", err)
 		return nil, err
 	}
 
 	metric.Hits = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: name + "_hits",
+		Help: "Hits breakdown by status, method and path.",
 	}, []string{"status", "method", "path"})
 	if err := prometheus.Register(metric.Hits); err != nil {
+		log.Printf("Error registering Hits: %v", err)
+		return nil, err
+	}
+
+	metric.Times = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name:    name + "_response_time_seconds",
+		Help:    "Response time in seconds.",
+		Buckets: prometheus.DefBuckets,
+	}, []string{"status", "method", "path"})
+	if err := prometheus.Register(metric.Times); err != nil {
+		log.Printf("Error registering metric.Times: %v", err)
 		return nil, err
 	}
 
