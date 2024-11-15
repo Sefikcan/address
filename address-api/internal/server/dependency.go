@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Server) MapHandlers(app *fiber.App) error {
-	metrics, err := metric.CreateMetrics(s.cfg.Metric.Url, s.cfg.Metric.ServiceName)
+	_, err := metric.CreateMetrics(s.cfg.Metric.Url, s.cfg.Metric.ServiceName)
 	if err != nil {
 		s.logger.Errorf("CreateMetrics error: %s", err)
 	}
@@ -22,25 +22,20 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 	addressRepository := repository.NewAddressRepository(s.db)
 	addressService := service.NewAddressService(s.cfg, addressRepository, s.logger)
 
-	// initialize handler
-	addressHandler := handlers.NewAddressHandler(addressService)
-
 	middlewareManager := mw.NewMiddlewareManager(s.cfg, s.logger)
 
-	// initialize handler
-	handlers.MapAddressRotes(app, addressHandler, s.logger, middlewareManager)
-
 	// set up middleware
-	app.Use(middlewareManager.RequestLogger)
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
 		AllowHeaders: "Origin, Content-Type, Accept, X-Request-ID",
 	}))
 	app.Use(recover.New(recover.Config{
-		EnableStackTrace: false,
+		EnableStackTrace: true,
 	}))
 	app.Use(requestid.New())
-	app.Use(middlewareManager.Metrics(metrics))
+	app.Use(middlewareManager.RequestLogger)
+	app.Use(middlewareManager.ErrorLogger)
+	//app.Use(middlewareManager.Metrics(metrics))
 
 	//swaggerMiddleware := swagger.NewSwagger("./address-api/docs/swagger.json", "/", s.logger)
 	//swaggerMiddleware.RegisterSwagger(app)
@@ -58,6 +53,12 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 		}
 		return c.Next()
 	})
+
+	// initialize handler
+	addressHandler := handlers.NewAddressHandler(addressService)
+
+	// initialize handler
+	handlers.MapAddressRotes(app, addressHandler, s.logger, middlewareManager)
 
 	return nil
 }

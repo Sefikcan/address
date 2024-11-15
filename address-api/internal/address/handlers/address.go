@@ -44,9 +44,7 @@ func (a addressHandler) GetAll(c *fiber.Ctx) error {
 
 	addresses, err := a.addressService.GetAll(c.Context(), pageNumber, pageSize)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Unable to retrieve addresses",
-		})
+		return fiber.NewError(fiber.StatusInternalServerError, "unable to retrieve addresses")
 	}
 
 	return c.JSON(addresses)
@@ -62,16 +60,12 @@ func (a addressHandler) GetAll(c *fiber.Ctx) error {
 func (a addressHandler) GetById(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid Id")
 	}
 
 	currentAddress, err := a.addressService.GetById(c.Context(), id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(currentAddress)
@@ -87,16 +81,12 @@ func (a addressHandler) GetById(c *fiber.Ctx) error {
 func (a addressHandler) Delete(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid Id")
 	}
 
 	err = a.addressService.Delete(c.Context(), id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -113,24 +103,18 @@ func (a addressHandler) Delete(c *fiber.Ctx) error {
 func (a addressHandler) Update(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"err": err.Error(),
-		})
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid Id")
 	}
 
 	address := request.AddressUpdateRequest{}
 	if err := c.BodyParser(&address); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Cannot parse JSON",
-		})
+		return fiber.NewError(fiber.StatusBadRequest, "Cannot parse JSON")
 	}
 
 	address.Id = id
 	updatedAddress, err := a.addressService.Update(c.Context(), address)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(updatedAddress)
@@ -146,16 +130,12 @@ func (a addressHandler) Update(c *fiber.Ctx) error {
 func (a addressHandler) Create(c *fiber.Ctx) error {
 	var address request.AddressCreateRequest
 	if err := c.BodyParser(&address); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Cannot parse JSON",
-		})
+		return fiber.NewError(fiber.StatusBadRequest, "Cannot parse JSON")
 	}
 
 	response, err := a.addressService.Create(c.Context(), address)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Unable to create address",
-		})
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(response)
@@ -173,23 +153,17 @@ func (a addressHandler) Patch(c *fiber.Ctx) error {
 	id := c.Params("id")
 	convertedId, err := strconv.Atoi(id)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid address Id",
-		})
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid Id")
 	}
 
 	var patchRequest request.AddressPatchRequest
 	if err := c.BodyParser(&patchRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
-		})
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
 	}
 
 	updatedAddress, err := a.addressService.Patch(c.Context(), convertedId, patchRequest)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Unable to patch address",
-		})
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(updatedAddress)
@@ -218,9 +192,7 @@ func (a addressHandler) GetAllV2(c *fiber.Ctx) error {
 
 	addresses, err := a.addressService.GetAll(c.Context(), pageNumber, pageSize)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Unable to retrieve addresses",
-		})
+		return fiber.NewError(fiber.StatusInternalServerError, "Unable to retrieve addresses")
 	}
 
 	return c.JSON(addresses)

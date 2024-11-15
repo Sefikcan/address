@@ -3,6 +3,7 @@ module github.com/sefikcan/address-api
 go 1.21.3
 
 require (
+	github.com/elastic/go-elasticsearch/v7 v7.17.10
 	github.com/evanphx/json-patch v0.5.2
 	github.com/go-openapi/loads v0.22.0
 	github.com/go-openapi/runtime v0.28.0

@@ -1,10 +1,17 @@
 package logger
 
 import (
+	"bytes"
+	"context"
+	"fmt"
+	"github.com/elastic/go-elasticsearch/v7"
+	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/sefikcan/address-api/pkg/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"io"
 	"os"
+	"time"
 )
 
 // Logger interface, defines log functions
@@ -31,6 +38,59 @@ type Logger interface {
 type logger struct {
 	cfg         *config.Config
 	sugarLogger *zap.SugaredLogger
+}
+
+func (l *logger) newElasticsearch(level zapcore.Level) zapcore.Core {
+	cfg := elasticsearch.Config{
+		Addresses: []string{l.cfg.Logger.ElasticsearchUrl},
+	}
+	es, err := elasticsearch.NewClient(cfg)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to create elasticsearch client: %v", err))
+	}
+
+	writeSyncer := zapcore.AddSync(newElasticsearchWriter(es, l.cfg.Logger.IndexName))
+	encoder := zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
+
+	return zapcore.NewCore(encoder, writeSyncer, level)
+}
+
+type elasticSearchWriter struct {
+	es    *elasticsearch.Client
+	index string
+}
+
+func (e elasticSearchWriter) Write(p []byte) (n int, err error) {
+	req := esapi.IndexRequest{
+		Index:      e.index,
+		DocumentID: fmt.Sprintf("%d", time.Now().UnixNano()),
+		Body:       bytes.NewReader(p),
+		Refresh:    "true",
+	}
+
+	res, err := req.Do(context.Background(), e.es)
+	if err != nil {
+		return 0, err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			return
+		}
+	}(res.Body)
+
+	if res.IsError() {
+		return 0, fmt.Errorf("elasticsearch index request failed: %s", res.String())
+	}
+
+	return len(p), nil
+}
+
+func newElasticsearchWriter(es *elasticsearch.Client, index string) *elasticSearchWriter {
+	return &elasticSearchWriter{
+		es:    es,
+		index: index,
+	}
 }
 
 // Above functions, implements logger interface functions
@@ -133,7 +193,9 @@ func (l *logger) InitLogger() {
 
 	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder // set time format ISO8601
 	core := zapcore.NewCore(encoder, logWriter, zap.NewAtomicLevelAt(logLevel))
-	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zapcore.ErrorLevel))
+	elasticSearch := l.newElasticsearch(logLevel)
+	tee := zapcore.NewTee(core, elasticSearch)
+	logger := zap.New(tee, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zapcore.ErrorLevel))
 
 	// Start SugaredLogger instance
 	l.sugarLogger = logger.Sugar()

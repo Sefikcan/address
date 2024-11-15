@@ -39,9 +39,11 @@ type ServerConfig struct {
 }
 
 type LoggerConfig struct {
-	Development bool   `mapstructure:"development"`
-	Encoding    string `mapstructure:"encoding"`
-	Level       string `mapstructure:"level"`
+	Development      bool   `mapstructure:"development"`
+	Encoding         string `mapstructure:"encoding"`
+	Level            string `mapstructure:"level"`
+	IndexName        string `mapstructure:"indexName"`
+	ElasticsearchUrl string `mapstructure:"elasticSearchUrl"`
 }
 
 type PostgresConfig struct {
