@@ -12,6 +12,7 @@ services:
       - "3048:3048"
     depends_on:
       - postgresql
+      - kafka
     volumes:
       - ./pkg/config:/root/pkg/config
     networks:
@@ -105,6 +106,47 @@ services:
     networks:
       - app-network
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - app-network
+
+  kafka:
+      image: confluentinc/cp-kafka:7.4.0
+      container_name: kafka
+      ports:
+        - "9092:9092"
+      environment:
+          KAFKA_BROKER_ID: 1
+          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+          KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      depends_on:
+        - zookeeper
+      networks:
+        - app-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    environment:
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092"
+    ports:
+      - "9044:8080"
+    depends_on:
+      - kafka
+    networks:
+      - app-network
+
 networks:
   app-network:
 
@@ -113,3 +155,5 @@ volumes:
   elasticsearch-data:
   prometheus-data:
   grafana-data:
+  kafka-volume:
+  zookeeper-volume:

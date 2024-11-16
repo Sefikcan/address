@@ -9,6 +9,7 @@ import (
 	"github.com/sefikcan/address-api/internal/address/repository"
 	"github.com/sefikcan/address-api/internal/address/service"
 	mw "github.com/sefikcan/address-api/internal/middleware"
+	"github.com/sefikcan/address-api/pkg/kafka"
 	"github.com/sefikcan/address-api/pkg/metric"
 )
 
@@ -18,9 +19,15 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 		s.logger.Errorf("CreateMetrics error: %s", err)
 	}
 
+	kafkaProducer := kafka.NewKafkaProducer(s.cfg.Kafka.Brokers)
+	if err != nil {
+		s.logger.Errorf("Error setting up Kafka producers: %v", err)
+		return err
+	}
+
 	// initialize repositories and service
 	addressRepository := repository.NewAddressRepository(s.db)
-	addressService := service.NewAddressService(s.cfg, addressRepository, s.logger)
+	addressService := service.NewAddressService(s.cfg, addressRepository, s.logger, kafkaProducer)
 
 	middlewareManager := mw.NewMiddlewareManager(s.cfg, s.logger)
 

@@ -7,10 +7,13 @@ import (
 	"github.com/sefikcan/address-api/internal/address/dto/request"
 	"github.com/sefikcan/address-api/internal/address/dto/response"
 	"github.com/sefikcan/address-api/internal/address/entity"
+	"github.com/sefikcan/address-api/internal/address/event"
 	"github.com/sefikcan/address-api/internal/address/mapping"
 	"github.com/sefikcan/address-api/internal/address/repository"
 	"github.com/sefikcan/address-api/internal/common"
+	"github.com/sefikcan/address-api/internal/constants"
 	"github.com/sefikcan/address-api/pkg/config"
+	"github.com/sefikcan/address-api/pkg/kafka"
 	"github.com/sefikcan/address-api/pkg/logger"
 )
 
@@ -27,6 +30,7 @@ type addressService struct {
 	cfg               *config.Config
 	addressRepository repository.AddressRepository
 	logger            logger.Logger
+	messageBroker     kafka.Producer
 }
 
 func (a addressService) Update(ctx context.Context, request request.AddressUpdateRequest) (*response.AddressResponse, error) {
@@ -51,6 +55,24 @@ func (a addressService) Update(ctx context.Context, request request.AddressUpdat
 	if err != nil {
 		return nil, err
 	}
+
+	addressEvent := event.AddressEvent{
+		EventType:   "AddressUpdated",
+		AddressId:   updatedAddress.Id,
+		City:        updatedAddress.City,
+		Country:     updatedAddress.Country,
+		FullAddress: updatedAddress.FullAddress,
+		UserId:      updatedAddress.UserId,
+	}
+
+	eventBytes, err := json.Marshal(addressEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	eventMessage := string(eventBytes)
+
+	err = a.messageBroker.SendMessage(ctx, constants.KafkaTopics.AddressUpdated, eventMessage)
 
 	mappedResponse := mapping.MapDto(updatedAddress)
 
@@ -91,9 +113,27 @@ func (a addressService) Create(ctx context.Context, request request.AddressCreat
 		return nil, err
 	}
 
+	addressEvent := event.AddressEvent{
+		EventType:   "AddressCreated",
+		AddressId:   address.Id,
+		City:        request.City,
+		Country:     request.Country,
+		FullAddress: request.FullAddress,
+		UserId:      request.UserId,
+	}
+
+	eventBytes, err := json.Marshal(addressEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	eventMessage := string(eventBytes)
+
+	err = a.messageBroker.SendMessage(ctx, constants.KafkaTopics.AddressCreated, eventMessage)
+
 	mappedResponse := mapping.MapDto(resp)
 
-	return mappedResponse, nil
+	return mappedResponse, err
 }
 
 func (a addressService) Delete(ctx context.Context, id int) error {
@@ -105,6 +145,20 @@ func (a addressService) Delete(ctx context.Context, id int) error {
 	if err = a.addressRepository.Delete(ctx, id); err != nil {
 		return err
 	}
+
+	addressEvent := event.AddressEvent{
+		EventType: "AddressDeleted",
+		AddressId: id,
+	}
+
+	eventBytes, err := json.Marshal(addressEvent)
+	if err != nil {
+		return err
+	}
+
+	eventMessage := string(eventBytes)
+
+	err = a.messageBroker.SendMessage(ctx, constants.KafkaTopics.AddressDeleted, eventMessage)
 
 	return nil
 }
@@ -144,6 +198,24 @@ func (a addressService) Patch(ctx context.Context, id int, patchRequest request.
 		return nil, err
 	}
 
+	addressEvent := event.AddressEvent{
+		EventType:   "AddressUpdated",
+		AddressId:   updatedAddress.Id,
+		City:        updatedAddress.City,
+		Country:     updatedAddress.Country,
+		FullAddress: updatedAddress.FullAddress,
+		UserId:      updatedAddress.UserId,
+	}
+
+	eventBytes, err := json.Marshal(addressEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	eventMessage := string(eventBytes)
+
+	err = a.messageBroker.SendMessage(ctx, constants.KafkaTopics.AddressUpdated, eventMessage)
+
 	mappedResponse := mapping.MapDto(updatedAddress)
 
 	return mappedResponse, nil
@@ -160,10 +232,11 @@ func (a addressService) GetById(ctx context.Context, id int) (*response.AddressR
 	return mappedResponse, nil
 }
 
-func NewAddressService(cfg *config.Config, addressRepository repository.AddressRepository, logger logger.Logger) AddressService {
+func NewAddressService(cfg *config.Config, addressRepository repository.AddressRepository, logger logger.Logger, messageBroker kafka.Producer) AddressService {
 	return &addressService{
 		cfg:               cfg,
 		addressRepository: addressRepository,
 		logger:            logger,
+		messageBroker:     messageBroker,
 	}
 }

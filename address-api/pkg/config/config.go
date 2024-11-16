@@ -24,6 +24,7 @@ type Config struct {
 	Logger   LoggerConfig         `mapstructure:"logger"`
 	Auth     AuthenticationConfig `mapstructure:"auth"`
 	Metric   MetricConfig         `mapstructure:"metric"`
+	Kafka    KafkaConfig          `mapstructure:"kafka"`
 }
 
 type ServerConfig struct {
@@ -67,6 +68,15 @@ type AuthenticationConfig struct {
 type MetricConfig struct {
 	Url         string `mapstructure:"url"`
 	ServiceName string `mapstructure:"serviceName"`
+}
+
+type KafkaConfig struct {
+	Brokers        []string `mapstructure:"brokers"`
+	ConsumerGroup  string   `mapstructure:"consumerGroup"`
+	MaxPollRecords int      `mapstructure:"maxPollRecords"`
+	GroupID        string   `mapstructure:"groupId"`
+	AutoCommit     bool     `mapstructure:"autoCommit"`
+	FetchMaxWaitMs int      `mapstructure:"fetchMaxWaitMs"`
 }
 
 func NewConfig() *Config {

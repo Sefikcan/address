@@ -15,6 +15,15 @@ logger:
   indexName: "address_log"
   elasticSearchUrl: http://localhost:9200
 
+kafka:
+  brokers:
+    - "0.0.0.0:9092"
+  consumerGroup: "address-service-group"
+  maxPollRecords: 100
+  groupId: "address-consumer-group"
+  autoCommit: true
+  fetchMaxWaitMs: 500
+
 metric:
   url: localhost:3000
   serviceName: address_api
