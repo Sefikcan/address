@@ -1,0 +1,15 @@
+logger:
+  development: true
+  encoding: json
+  level: info
+  indexName: "address_log"
+  elasticSearchUrl: http://localhost:9200
+
+kafka:
+  brokers:
+    - "localhost:9092"
+  consumerGroup: "address-service-group"
+  maxPollRecords: 100
+  groupId: "address-consumer-group"
+  autoCommit: true
+  fetchMaxWaitMs: 500
