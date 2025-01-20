@@ -147,6 +147,20 @@ services:
     networks:
       - app-network
 
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 networks:
   app-network:
 
@@ -157,3 +171,4 @@ volumes:
   grafana-data:
   kafka-volume:
   zookeeper-volume:
+  redis-data:

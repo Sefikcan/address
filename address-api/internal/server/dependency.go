@@ -41,8 +41,11 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 		EnableStackTrace: true,
 	}))
 	app.Use(requestid.New())
-	tb := ratelimiter.NewTokenBucket()
-	app.Use(middlewareManager.RateLimitMiddleware(tb))
+	//tb := ratelimiter.NewTokenBucket()
+	//app.Use(middlewareManager.RateLimitMiddleware(tb))
+
+	distributedTb := ratelimiter.NewDistributedTokenBucket("localhost:6379")
+	app.Use(middlewareManager.DistributedRateLimitMiddleware(distributedTb))
 	app.Use(middlewareManager.RequestLogger)
 	app.Use(middlewareManager.ErrorLogger)
 	app.Use(middlewareManager.Metrics(metrics))

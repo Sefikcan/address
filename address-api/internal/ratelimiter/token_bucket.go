@@ -8,9 +8,9 @@ import (
 
 const (
 	// MAX_BUCKET_SIZE token bucket max capacity
-	MAX_BUCKET_SIZE float64 = 3
+	MAX_BUCKET_SIZE = 3
 	// REFILL_RATE token bucket filling rate per second
-	REFILL_RATE int = 1
+	REFILL_RATE = 1
 )
 
 type TokenBucket struct {
