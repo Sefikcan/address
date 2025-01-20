@@ -9,6 +9,7 @@ import (
 	"github.com/sefikcan/address-api/internal/address/repository"
 	"github.com/sefikcan/address-api/internal/address/service"
 	mw "github.com/sefikcan/address-api/internal/middleware"
+	"github.com/sefikcan/address-api/internal/ratelimiter"
 	"github.com/sefikcan/address-api/pkg/kafka"
 	"github.com/sefikcan/address-api/pkg/metric"
 )
@@ -40,6 +41,8 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 		EnableStackTrace: true,
 	}))
 	app.Use(requestid.New())
+	tb := ratelimiter.NewTokenBucket()
+	app.Use(middlewareManager.RateLimitMiddleware(tb))
 	app.Use(middlewareManager.RequestLogger)
 	app.Use(middlewareManager.ErrorLogger)
 	app.Use(middlewareManager.Metrics(metrics))
