@@ -22,6 +22,9 @@ metric:
 auth:
   jwtSecret: "your_secret_key"
 
+redis:
+  addr: "localhost:6379"
+
 kafka:
   brokers:
     - "kafka:9092"

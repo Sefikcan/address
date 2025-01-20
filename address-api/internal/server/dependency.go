@@ -8,16 +8,28 @@ import (
 	"github.com/sefikcan/address-api/internal/address/handlers"
 	"github.com/sefikcan/address-api/internal/address/repository"
 	"github.com/sefikcan/address-api/internal/address/service"
+	idempotency "github.com/sefikcan/address-api/internal/idempotency/service"
 	mw "github.com/sefikcan/address-api/internal/middleware"
 	"github.com/sefikcan/address-api/internal/ratelimiter"
 	"github.com/sefikcan/address-api/pkg/kafka"
 	"github.com/sefikcan/address-api/pkg/metric"
+	"github.com/sefikcan/address-api/pkg/redis"
 )
 
 func (s *Server) MapHandlers(app *fiber.App) error {
 	metrics, err := metric.CreateMetrics(s.cfg.Metric.Url, s.cfg.Metric.ServiceName)
 	if err != nil {
 		s.logger.Errorf("CreateMetrics error: %s", err)
+	}
+
+	if err = redis.InitializeRedis(s.cfg); err != nil {
+		s.logger.Fatalf("Failed to connect to Redis: %v", err)
+	}
+	redisClient := redis.GetClient()
+	_, err = redisClient.Ping(redisClient.Context()).Result()
+	if err != nil {
+		s.logger.Fatalf("Failed to ping Redis: %v", err)
+		return err
 	}
 
 	kafkaProducer := kafka.NewKafkaProducer(s.cfg.Kafka.Brokers)
@@ -44,7 +56,10 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 	//tb := ratelimiter.NewTokenBucket()
 	//app.Use(middlewareManager.RateLimitMiddleware(tb))
 
-	distributedTb := ratelimiter.NewDistributedTokenBucket("localhost:6379")
+	idempotencyService := idempotency.NewIdempotencyService(redisClient)
+	app.Use(middlewareManager.IdempotencyMiddleware(idempotencyService))
+
+	distributedTb := ratelimiter.NewDistributedTokenBucket(redisClient)
 	app.Use(middlewareManager.DistributedRateLimitMiddleware(distributedTb))
 	app.Use(middlewareManager.RequestLogger)
 	app.Use(middlewareManager.ErrorLogger)
@@ -71,7 +86,7 @@ func (s *Server) MapHandlers(app *fiber.App) error {
 	addressHandler := handlers.NewAddressHandler(addressService)
 
 	// initialize handler
-	handlers.MapAddressRotes(app, addressHandler, s.logger, middlewareManager)
+	handlers.MapAddressRotes(app, addressHandler, s.logger, middlewareManager, idempotencyService)
 
 	return nil
 }

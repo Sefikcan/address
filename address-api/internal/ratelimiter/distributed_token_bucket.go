@@ -12,13 +12,9 @@ type DistributedTokenBucket struct {
 }
 
 // NewDistributedTokenBucket create new DistributedTokenBucket instance
-func NewDistributedTokenBucket(redisAddr string) *DistributedTokenBucket {
-	rdb := redis.NewClient(&redis.Options{
-		Addr: redisAddr,
-	})
-
+func NewDistributedTokenBucket(redisClient *redis.Client) *DistributedTokenBucket {
 	return &DistributedTokenBucket{
-		client: rdb,
+		client: redisClient,
 	}
 }
 

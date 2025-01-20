@@ -3,19 +3,20 @@ package handlers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/sefikcan/address-api/internal/address/dto/request"
+	idempotency "github.com/sefikcan/address-api/internal/idempotency/service"
 	"github.com/sefikcan/address-api/internal/middleware"
 	"github.com/sefikcan/address-api/internal/ratelimiter"
 	"github.com/sefikcan/address-api/pkg/logger"
 	"github.com/sefikcan/address-api/pkg/util"
 )
 
-func MapAddressRotes(app *fiber.App, addressHandler AddressHandler, logger logger.Logger, manager *middleware.Manager) {
+func MapAddressRotes(app *fiber.App, addressHandler AddressHandler, logger logger.Logger, manager *middleware.Manager, idempotencyService idempotency.IdempotencyService) {
 	v1 := app.Group("/api/v1/addresses")
 
 	rtb := ratelimiter.NewEPDistributedTokenBucket("localhost:6379")
 
-	v1.Get("/", addressHandler.GetAll)
-	v1.Post("/", manager.EPDistributedRateLimitMiddleware(rtb, "/"), middleware.Validator(&request.AddressCreateRequest{}), addressHandler.Create)
+	v1.Get("/", manager.IdempotencyMiddleware(idempotencyService), addressHandler.GetAll)
+	v1.Post("/", manager.EPDistributedRateLimitMiddleware(rtb, "create-address"), middleware.Validator(&request.AddressCreateRequest{}), addressHandler.Create)
 	v1.Delete("/:id", addressHandler.Delete)
 	v1.Get("/:id", addressHandler.GetById)
 	v1.Put("/:id", middleware.Validator(&request.AddressUpdateRequest{}), addressHandler.Update)

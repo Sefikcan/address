@@ -25,6 +25,7 @@ type Config struct {
 	Auth     AuthenticationConfig `mapstructure:"auth"`
 	Metric   MetricConfig         `mapstructure:"metric"`
 	Kafka    KafkaConfig          `mapstructure:"kafka"`
+	Redis    RedisConfig          `mapstructure:"redis"`
 }
 
 type ServerConfig struct {
@@ -37,6 +38,10 @@ type ServerConfig struct {
 	SSL            bool          `mapstructure:"ssl"`
 	MaxHeaderBytes int           `mapstructure:"maxHeaderBytes"`
 	CtxTimeout     time.Duration `mapstructure:"ctxTimeout"`
+}
+
+type RedisConfig struct {
+	Addr string `mapstructure:"addr"`
 }
 
 type LoggerConfig struct {

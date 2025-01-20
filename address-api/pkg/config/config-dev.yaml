@@ -31,6 +31,9 @@ metric:
 auth:
   jwtSecret: "your_secret_key"
 
+redis:
+  addr: "localhost:6379"
+
 postgres:
   host: localhost
   port: 5432
